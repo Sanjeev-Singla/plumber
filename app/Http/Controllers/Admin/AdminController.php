@@ -12,8 +12,6 @@ use hash;
 
 class AdminController extends Controller
 {
-    
-
      public function addUser(Request $request){
 		 
         if(!blank($request->all())){
