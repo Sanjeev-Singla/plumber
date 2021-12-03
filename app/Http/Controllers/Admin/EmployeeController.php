@@ -226,6 +226,17 @@ class EmployeeController extends Controller
             return response()->json(['status' => 'No access!'],  401);
         }
     }
+
+    public function singleEmployee($id){
+        $user = Auth::user();
+		if( $user['role'] == 0 || $user['role'] == 1){
+            $user = User::where('id',$id)->get();
+            return response()->json($user, 200);
+        }else{
+            return response()->json(['status' => 'No access!'],  401);
+        }
+
+    }
      
     
 }

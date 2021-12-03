@@ -35,11 +35,12 @@ Route::group(['middleware'=>'auth:api'],function(){
     /*Project Routes*/
     Route::post('add-project',[Admin\ProjectController::class,'addProject']);
     Route::post('update-project',[Admin\ProjectController::class,'updateProject']);
-    Route::post('single-project/{id}',[Admin\ProjectController::class,'getProject']);
+    Route::get('single-project/{id}',[Admin\ProjectController::class,'getProject']);
     Route::post('assign-project/{id}',[Admin\ProjectController::class,'assignProject']);
     Route::get('list-projects',[Admin\ProjectController::class,'projectListing']);
     Route::post('delete-project',[Admin\ProjectController::class,'deleteProject']);
     Route::get('assigned-all-project',[Admin\ProjectController::class,'assignProjectListing']);
+
 
 
     /*Vehicle Routes*/
@@ -47,7 +48,7 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::post('update-vehicle',[Admin\VehicleController::class,'editVehicle']);
     Route::post('delete-vehicle',[Admin\VehicleController::class,'deleteVehicle']);	    
     Route::get('list-vehicles',[Admin\VehicleController::class,'allVehicle']);
-    Route::post('single-vehicle/{id}',[Admin\VehicleController::class,'getVehicle']);
+    Route::get('single-vehicle/{id}',[Admin\VehicleController::class,'getVehicle']);
 
     
     /*Tool Routes*/
@@ -55,7 +56,7 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::post('update-tool',[Admin\ToolController::class,'editTool']);
     Route::post('delete-tool',[Admin\ToolController::class,'deleteTool']);	    
     Route::get('list-tools',[Admin\ToolController::class,'allTool']);
-    Route::post('single-tool/{id}',[Admin\ToolController::class,'getTool']);
+    Route::get('single-tool/{id}',[Admin\ToolController::class,'getTool']);
 
     
     /*Employee Routes*/
@@ -63,6 +64,8 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::post('update-employee', [Admin\EmployeeController::class, 'updateEmployee']);
     Route::post('delete-employee', [Admin\EmployeeController::class, 'deleteEmployee']);
     Route::get('list-employees', [Admin\EmployeeController::class, 'allEmployee']);
+    Route::get('single-employee/{id}', [Admin\EmployeeController::class, 'singleEmployee']);
+
     
      /*Safety Routes*/
     Route::post('add-safety',[Admin\SafetyController::class,'addSafety']);

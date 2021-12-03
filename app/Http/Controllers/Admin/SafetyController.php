@@ -170,10 +170,10 @@ class SafetyController extends Controller
         
     }
     
-    public function getSafety(Request $request,$id){
+    public function getSafety($id){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
-            $safety = Safety::where('id',$id);
+            $safety = Safety::where('id',$id)->get();
             return response()->json($safety, 200);
         }else{
             return response()->json(['status' => 'No access!'],  401);

@@ -151,7 +151,7 @@ class VehicleController extends Controller
     public function getVehicle(Request $request,$id){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
-            $vehicle = Vehicle::where('id',$id);
+            $vehicle = Vehicle::where('id',$id)->get();
             return response()->json($vehicle, 200);
         }else{
             return response()->json(['status' => 'No access!'],  401);

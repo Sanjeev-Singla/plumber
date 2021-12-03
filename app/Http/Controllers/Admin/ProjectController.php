@@ -201,10 +201,10 @@ class ProjectController extends Controller
         }
     }
     
-    public function getProject(Request $request,$id){
+    public function getProject($id){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
-            $project = Project::where('id',$id);
+            $project = Project::where('id',$id)->get();
             return response()->json($project, 200);
         }else{
             return response()->json(['status' => 'No access!'],  401);

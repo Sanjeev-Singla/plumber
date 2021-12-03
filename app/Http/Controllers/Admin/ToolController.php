@@ -299,7 +299,7 @@ class ToolController extends Controller
     public function getTool(Request $request,$id){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
-            $tool = Tool::where('id',$id);
+            $tool = Tool::where('id',$id)->get();
             return response()->json($tool, 200);
         }else{
             return response()->json(['status' => 'No access!'],  401);
