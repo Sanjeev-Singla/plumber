@@ -302,6 +302,7 @@ class ToolController extends Controller
             $tool = Tool::where('id',$id)->get();
             return response()->json($tool, 200);
         }else{
+            
             return response()->json(['status' => 'No access!'],  401);
         }
     }
