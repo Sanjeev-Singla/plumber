@@ -118,12 +118,14 @@ class AdminController extends Controller
      */
     public function updatePassword(Request $request) 
     {
-        $this->validate($request,[ 
+        $validator = Validator::make($request->all(),[ 
             'current_password' => 'required|different:new_password', 
             'new_password' => 'required|different:current_password', 
             'new_confirm_password' => 'required|same:new_password' 
         ]); 
-
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 201);
+        }
         $data = $request->all();
         if (!\Hash::check($data['current_password'], auth()->user()->password)) { 
 
