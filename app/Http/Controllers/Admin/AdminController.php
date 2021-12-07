@@ -164,7 +164,6 @@ class AdminController extends Controller
      */
     public function deleteUser(Request $request)
     {
-        $user = \Auth::user();
         if (\Auth::user()->role == 0) {
             $validator = Validator::make($request->all(),[ 
                 'user_id'   =>  'required|numeric|exists:users,id'
@@ -173,7 +172,7 @@ class AdminController extends Controller
                 return response()->json($validator->errors(), 201);
             }
             
-            $user->update(['status','Disable']);
+            \App\Models\User::where('id',$request->user_id)->update(['status','Disable']);
             return response()->json(['status' => 'User deleted successfully.'],200);
         }
         return response()->json(['status' => 'Not authorized to perform.'],201);
