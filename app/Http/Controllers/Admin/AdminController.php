@@ -172,7 +172,7 @@ class AdminController extends Controller
                 return response()->json($validator->errors(), 201);
             }
             
-            \App\Models\User::where('id',$request->user_id)->update(['status','Disable']);
+            \App\Models\User::where('id',$request->user_id)->update(['status'=>'Disable']);
             return response()->json(['status' => 'User deleted successfully.'],200);
         }
         return response()->json(['status' => 'Not authorized to perform.'],201);
