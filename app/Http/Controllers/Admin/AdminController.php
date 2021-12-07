@@ -230,7 +230,7 @@ class AdminController extends Controller
             $inputs = $request->all();
             unset($inputs['user_id']);
             \App\Models\User::where('id',$request->user_id)->update($inputs);
-            return response()->json(['status' => 'User updated successfully.'],201);
+            return response()->json(['status' => 'User updated successfully.'],200);
         }
         return response()->json(['status' => 'Not authorized to perform.'],201);
     }
