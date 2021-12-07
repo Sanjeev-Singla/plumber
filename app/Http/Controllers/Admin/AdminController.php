@@ -12,6 +12,13 @@ use hash;
 
 class AdminController extends Controller
 {
+         
+     /**
+      * addUser
+      *
+      * @param  mixed $request
+      * @return void
+      */
      public function addUser(Request $request){
 		 
         if(!blank($request->all())){
@@ -19,8 +26,8 @@ class AdminController extends Controller
             if($user['role'] == 0){
                 
                 $validator = Validator::make($request->all(), [
-                    'first_name' => 'required',
-                    'last_name' => 'required',
+                    'first_name' => 'required|alpha',
+                    'last_name' => 'required|alpha',
 					'email' => 'required|unique:users,email',
                     'password' => 'required',
                     'role' => 'required'
@@ -47,9 +54,8 @@ class AdminController extends Controller
                 }
                 $user->token = $user->createToken('plumber')->accessToken;
                 return response()->json($user, 200);
-            }else{
-                 return response()->json(['status' => 'Only Super Admin can add Employee and Admin!'],  401);
             }
+            return response()->json(['status' => 'Only Super Admin can add Employee and Admin!'],  401);
         }else{
             
              $data= Array (
@@ -103,37 +109,110 @@ class AdminController extends Controller
         
     }
 	
-    
+        
+    /**
+     * updatePassword
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function updatePassword(Request $request) 
     {
         $this->validate($request,[ 
-            'current_password' => 'required', 
-            'new_password' => 'required|same:new_confirm_password', 
-            'new_confirm_password' => 'required' 
-
+            'current_password' => 'required|different:new_password', 
+            'new_password' => 'required|different:current_password', 
+            'new_confirm_password' => 'required|same:new_password' 
         ]); 
+
         $data = $request->all();
-        if (!\Hash::check($data['current_password'], auth()->user()->password)) 
-        { 
-           return response()->json(['status' => 'You have entered the wrong current password' ]);
+        if (!\Hash::check($data['current_password'], auth()->user()->password)) { 
+
+           return response()->json(['status' => 'You have entered the wrong current password' ],201);
+
         } else { 
+
             $user = User::find(Auth::id());
             $updatePasword = $user->update([ 'password' => $data['new_password'] ]);
             if ($updatePasword) { 
-                    return response()->json(['status' => 'Password Updated Successfully!'],200);
-                }else { 
-                    return response()->json(['status' => 'Data not updated!']);
-                }
-           
+                return response()->json(['status' => 'Password Updated Successfully!'],200);
+            }else { 
+                return response()->json(['status' => 'Data not updated!'],201);
+            }
+
         }
     }
     
-    
+        
+    /**
+     * logout
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function logout(Request $request) {
       Auth::logout();
-      return response()->json(['status' => 'logout successfully']);
+      return response()->json(['status' => 'logout successfully'],200);
     }
-      
+          
+    /**
+     * deleteUser
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function deleteUser(Request $request)
+    {
+        $user = \Auth::user();
+        if (\Auth::user()->role == 0) {
+            $this->validate($request,[ 
+                'user_id'   =>  'required|numeric|exists:users,id'
+            ]); 
+            $user->update(['status','Disable']);
+            return response()->json(['status' => 'User deleted successfully.'],200);
+        }
+        return response()->json(['status' => 'Not authorized to perform.'],201);
+    }
+    
+    /**
+     * userList
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function userList(Request $request)
+    {
+        if (\Auth::user()->role == 0) {
+            $perPage = 20;
+            $skip = $request->page?20 * ($request->page - 1):0;
 
+            $users = \App\Models\User::where('status','enable')
+                                        ->where('role',\Config::get('constant.users.role.admin'))
+                                        ->orderBy('id','DESC')
+                                        ->take($perPage)
+                                        ->skip($skip)
+                                        ->get();
+            return response()->json(['user'=>$users,'status' => 'users list.'],200);
+        }
+        return response()->json(['status' => 'Not authorized to perform.'],201);
+    }
 
+    public function updateUser(Request $request)
+    {
+        $user = Auth::user();
+        if($user['role'] == 0){
+            $validator = Validator::make($request->all(), [
+                'first_name' => 'required|alpha',
+                'last_name' => 'required|alpha',
+                'email' => 'required|unique:users,email',
+                'role' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 201);
+            }
+            $inputs = $request->all();
+            $user->update($inputs);
+            return response()->json(['status' => 'User updated successfully.'],201);
+        }
+        return response()->json(['status' => 'Not authorized to perform.'],201);
+    }
 }

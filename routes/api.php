@@ -28,9 +28,13 @@ Route::group(['middleware'=>'auth:api'],function(){
     
 	/*add admin*/
 	Route::post('addUser', [Admin\AdminController::class, 'addUser']); 
-
     Route::post('change-password', [Admin\AdminController::class, 'updatePassword']);
     Route::get('logout', [Admin\AdminController::class, 'logout']);
+    Route::group(['prefix'=>'admin'],function(){
+        Route::post('delete_user',[Admin\AdminController::class,'deleteUser']);
+        Route::post('user_list',[Admin\AdminController::class,'userList']);
+        Route::post('update',[Admin\AdminController::class,'updateUser']);
+    });
 
     /*Project Routes*/
     Route::post('add-project',[Admin\ProjectController::class,'addProject']);
@@ -74,4 +78,6 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::get('list-safety',[Admin\SafetyController::class,'allSafety']);
     Route::get('single-safety/{id}',[Admin\SafetyController::class,'getSafety']);
 
+
+    
 });
