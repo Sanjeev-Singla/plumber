@@ -222,12 +222,13 @@ class AdminController extends Controller
                 'last_name'     => 'required|alpha',
                 'email'         => 'required|unique:users,email',
                 'role'          => 'required',
-                'user_id'       =>'required|numeric|exists:users,id'
+                'user_id'       => 'required|numeric|exists:users,id'
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 201);
             }
             $inputs = $request->all();
+            unset($inputs['user_id']);
             \App\Models\User::where('id',$request->user_id)->update($inputs);
             return response()->json(['status' => 'User updated successfully.'],201);
         }
