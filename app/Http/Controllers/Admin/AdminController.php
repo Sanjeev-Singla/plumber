@@ -172,7 +172,7 @@ class AdminController extends Controller
                 return response()->json($validator->errors(), 201);
             }
             
-            \App\Models\User::where('id',$request->user_id)->update(['status'=>'Disable']);
+            \App\Models\User::where('id',$request->user_id)->update(['status'=>\Config::get('constant.users.status.disabled')]);
             return response()->json(['status' => 'User deleted successfully.'],200);
         }
         return response()->json(['status' => 'Not authorized to perform.'],201);
@@ -197,7 +197,7 @@ class AdminController extends Controller
             $perPage = 20;
             $skip = $request->page?20 * ($request->page - 1):0;
 
-            $users = \App\Models\User::where('status','enable')
+            $users = \App\Models\User::where('status',\Config::get('constant.users.status.enabled'))
                                         ->where('role',\Config::get('constant.users.role.admin'))
                                         ->orderBy('id','DESC')
                                         ->take($perPage)
