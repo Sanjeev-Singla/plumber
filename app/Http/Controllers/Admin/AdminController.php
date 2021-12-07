@@ -164,9 +164,13 @@ class AdminController extends Controller
     {
         $user = \Auth::user();
         if (\Auth::user()->role == 0) {
-            $this->validate($request,[ 
+            $validator = Validator::make($request->all(),[ 
                 'user_id'   =>  'required|numeric|exists:users,id'
             ]); 
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 201);
+            }
+            
             $user->update(['status','Disable']);
             return response()->json(['status' => 'User deleted successfully.'],200);
         }
@@ -188,7 +192,7 @@ class AdminController extends Controller
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 201);
             }
-            
+
             $perPage = 20;
             $skip = $request->page?20 * ($request->page - 1):0;
 
