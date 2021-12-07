@@ -218,16 +218,17 @@ class AdminController extends Controller
     {
         if(\Auth::user()->role == 0){
             $validator = Validator::make($request->all(), [
-                'first_name' => 'required|alpha',
-                'last_name' => 'required|alpha',
-                'email' => 'required|unique:users,email',
-                'role' => 'required'
+                'first_name'    => 'required|alpha',
+                'last_name'     => 'required|alpha',
+                'email'         => 'required|unique:users,email',
+                'role'          => 'required',
+                'user_id'       =>'required|numeric|exists:users,id'
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 201);
             }
             $inputs = $request->all();
-            $user->update($inputs);
+            \App\Models\User::where('id',$request->user_id)->update($inputs);
             return response()->json(['status' => 'User updated successfully.'],201);
         }
         return response()->json(['status' => 'Not authorized to perform.'],201);
