@@ -182,9 +182,13 @@ class AdminController extends Controller
     public function userList(Request $request)
     {
         if (\Auth::user()->role == 0) {
-            $this->validate($request,[ 
+            $validator = Validator::make($request->all(), [ 
                 'page'   =>  'required|numeric'
             ]); 
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 201);
+            }
+            
             $perPage = 20;
             $skip = $request->page?20 * ($request->page - 1):0;
 
