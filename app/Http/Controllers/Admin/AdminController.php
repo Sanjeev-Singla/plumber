@@ -216,8 +216,7 @@ class AdminController extends Controller
      */
     public function updateUser(Request $request)
     {
-        $user = Auth::user();
-        if($user['role'] == 0){
+        if(\Auth::user()->role == 0){
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required|alpha',
                 'last_name' => 'required|alpha',
