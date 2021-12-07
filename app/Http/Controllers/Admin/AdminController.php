@@ -182,6 +182,9 @@ class AdminController extends Controller
     public function userList(Request $request)
     {
         if (\Auth::user()->role == 0) {
+            $this->validate($request,[ 
+                'page'   =>  'required|numeric'
+            ]); 
             $perPage = 20;
             $skip = $request->page?20 * ($request->page - 1):0;
 
@@ -191,11 +194,17 @@ class AdminController extends Controller
                                         ->take($perPage)
                                         ->skip($skip)
                                         ->get();
-            return response()->json(['user'=>$users,'status' => 'users list.'],200);
+            return response()->json(['userList'=>$users,'status' => 'users list.'],200);
         }
         return response()->json(['status' => 'Not authorized to perform.'],201);
     }
-
+    
+    /**
+     * updateUser
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function updateUser(Request $request)
     {
         $user = Auth::user();
