@@ -220,9 +220,10 @@ class AdminController extends Controller
             $validator = Validator::make($request->all(), [
                 'first_name'    => 'required|alpha',
                 'last_name'     => 'required|alpha',
-                'email'         => 'required|unique:users,email',
-                'role'          => 'required',
-                'user_id'       => 'required|numeric|exists:users,id'
+                'email'         => 'required|email',
+                'user_id'       => 'required|numeric|exists:users,id',
+                'password'      => 'required|min:6|max:255',
+                'confirm_password'=>'required|min:6|max:255|same:password',
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 201);
