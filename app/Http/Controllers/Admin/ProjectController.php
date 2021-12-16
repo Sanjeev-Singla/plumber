@@ -195,7 +195,7 @@ class ProjectController extends Controller
             $projects = Project::all();
 
             $projects->transform(function($project){
-                $project->assigned_users = $project->users()->all(['id','first_name','last_name']);
+                $project->assigned_users = $project->users()->get(['id','first_name','last_name']);
                 return $project;
             });
 
