@@ -220,17 +220,17 @@ class AdminController extends Controller
             $validator = Validator::make($request->all(), [
                 'first_name'    => 'required|alpha',
                 'last_name'     => 'required|alpha',
+                'username'      => 'required|unique:users,username',
                 'email'         => 'required|email',
                 'user_id'       => 'required|numeric|exists:users,id',
                 'password'      => 'required|min:6|max:255',
-                'confirm_password'=>'required|min:6|max:255|same:password',
+                'status'        => 'required',
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 201);
             }
             $inputs = $request->all();
             unset($inputs['user_id']);
-            unset($inputs['confirm_password']);
             \App\Models\User::where('id',$request->user_id)->update($inputs);
             return response()->json(['status' => 'User updated successfully.'],200);
         }
