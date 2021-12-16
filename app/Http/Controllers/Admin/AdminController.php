@@ -230,6 +230,7 @@ class AdminController extends Controller
             }
             $inputs = $request->all();
             unset($inputs['user_id']);
+            unset($inputs['confirm_password']);
             \App\Models\User::where('id',$request->user_id)->update($inputs);
             return response()->json(['status' => 'User updated successfully.'],200);
         }
