@@ -28,7 +28,7 @@ class AdminController extends Controller
                 $validator = Validator::make($request->all(), [
                     'first_name'=>  'required|alpha',
                     'last_name' =>  'required|alpha',
-                    'username'  =>  'required|unique:user,username',
+                    'username'  =>  'required|unique:users,username',
 					'email'     =>  'required|unique:users,email',
                     'password'  =>  'required',
                     "status"    =>  'required'
