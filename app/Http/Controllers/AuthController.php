@@ -56,6 +56,7 @@ class AuthController extends Controller
             $responseArray['first_name'] = $user->first_name;
             $responseArray['last_name'] = $user->last_name;
             $responseArray['address'] = $user->address;
+            $responseArray['role'] = $user->role;
             return response()->json($responseArray, 202);
         } else {
             return response()->json(['error' => 'Unauthrized'], 202);
