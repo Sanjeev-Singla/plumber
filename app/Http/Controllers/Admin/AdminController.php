@@ -26,32 +26,22 @@ class AdminController extends Controller
             if($user['role'] == 0){
                 
                 $validator = Validator::make($request->all(), [
-                    'first_name' => 'required|alpha',
-                    'last_name' => 'required|alpha',
-					'email' => 'required|unique:users,email',
-                    'password' => 'required',
-                    'role' => 'required'
+                    'first_name'=>  'required|alpha',
+                    'last_name' =>  'required|alpha',
+                    'username'  =>  'required|unique:user,username',
+					'email'     =>  'required|unique:users,email',
+                    'password'  =>  'required',
+                    "status"    =>  'required'
                 ]);
         
                 if ($validator->fails()) {
                     return response()->json($validator->errors(), 201);
                 }
-                $email = $request['email'];
-                $username = strstr($email,'@',true);
-                $user = User::create([
-                    'username'=> $username,
-                    'first_name' => $request['first_name'],
-                    'last_name' => $request['last_name'],
-                    'email' => $request['email'],
-                    "password"=> $request['password'],
-                    "role"=>  $request['role'],
-                    'status' => 1  
-                ]);
-                if ($data = User::where('email', $email)->first()) {
-                     $id = $data['id'];
-                    $update['username'] =  $username ."_" . $id;
-                    User::where('email', $email)->update($update);
-                }
+
+                $inputs = $request->all();
+                $inputs['role'] = 1;
+                $user = User::create($inputs);
+
                 $user->token = $user->createToken('plumber')->accessToken;
                 return response()->json($user, 200);
             }
@@ -224,7 +214,7 @@ class AdminController extends Controller
                 'email'         => 'required|email',
                 'user_id'       => 'required|numeric|exists:users,id',
                 'password'      => 'required|min:6|max:255',
-                'status'        => 'required',
+                'status'        => 'required'
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 201);
