@@ -94,24 +94,22 @@ class ProjectController extends Controller
          
 		if( $user['role'] == 0 || $user['role'] == 1){
 
-                $validator = Validator::make($request->all(), [
-                    'id' => 'required',
-                ]);
-        
-                if ($validator->fails()) {
-                    return response()->json($validator->errors(), 201);
-                }
-				
-             $update = Project::where('id',$request->id)->update($request->all());
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+            ]);
+    
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 201);
+            }
+            $update = Project::where('id',$request->id)->update($request->all());
             
             if ($update) {
                 return response()->json(['success' => 'updated successfully'], 200);
             }
-            
                      
-         }else{
-              return response()->json(['status' => 'Only Admin can edit project Details!'],  401);
-          }
+        }else{
+            return response()->json(['status' => 'Only Admin can edit project Details!'],  401);
+        }
          
      }else{
          
@@ -194,8 +192,14 @@ class ProjectController extends Controller
     public function projectListing(){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
-            $project = Project::all();
-            return response()->json($project, 200);
+            $projects = Project::all();
+
+            $projects->transform(function($project){
+                $project = $project->users;
+                return $project;
+            });
+
+            return response()->json($projects, 200);
         }else{
             return response()->json(['status' => 'No access!'],  401);
         }
