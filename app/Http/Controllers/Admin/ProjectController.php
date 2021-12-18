@@ -198,7 +198,7 @@ class ProjectController extends ApiBaseController
                 return $project;
             });
 
-            return response()->json($projects, 200);
+            return $this->sendResponse($projects,'Projects List',200,200);
         }
         return $this->sendSingleFieldError('No access!',401,401);
     }
@@ -207,7 +207,8 @@ class ProjectController extends ApiBaseController
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             $project = Project::where('id',$id)->get();
-            return response()->json($project, 200);
+
+            return $this->sendResponse($project,'Projects Details',200,200);
         }
         return $this->sendSingleFieldError('No access!',401,401);
     }
@@ -216,7 +217,7 @@ class ProjectController extends ApiBaseController
         $admin = Auth::user();
         
 		if( $admin['role'] == 0 || $admin['role'] == 1){
-            return response()->json($admin->users, 200);
+            return $this->sendResponse($admin->users,'Assigned project list',200,200);
         }
         return $this->sendSingleFieldError('No access!',401,401);
     }
