@@ -42,7 +42,7 @@ class ProjectController extends ApiBaseController
                     
                     $inputs = $request->all();
                     
-                    $project = Project::create($inputs);
+                    Project::create($inputs);
                     
                     return response()->json(['status' => 'Added Successfully!'], 202);
             }else{
@@ -87,32 +87,24 @@ class ProjectController extends ApiBaseController
     
     
     public function updateProject(Request $request){
-        
-     $user = Auth::user();
-    
-    
-     if( !blank($request->all())  ){
-         
-		if( $user['role'] == 0 || $user['role'] == 1){
-
-            $validator = Validator::make($request->all(), [
-                'id' => 'required',
-            ]);
-    
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 201);
-            }
-            $update = Project::where('id',$request->id)->update($request->all());
+        $user = Auth::user();
+        if( !blank($request->all())  ){
             
-            if ($update) {
+            if( $user['role'] == 0 || $user['role'] == 1){
+
+                $validator = Validator::make($request->all(), [
+                    'id' => 'required',
+                ]);
+                if ($validator->fails()) {
+                    return $this->sendSingleFieldError($validator->errors()->first(),201,201);
+                }
+                Project::where('id',$request->id)->update($request->all());
+                
                 return response()->json(['success' => 'updated successfully'], 200);
             }
-                     
+            return $this->sendSingleFieldError('No access!',401,401);
+            
         }else{
-            return response()->json(['status' => 'Only Admin can edit project Details!'],  401);
-        }
-         
-     }else{
          
             $data= Array ( 
                             'id' => 
@@ -168,8 +160,6 @@ class ProjectController extends ApiBaseController
             $employee=  $request['assign_employees'];
             $usernames = explode(',', $employee);
             $employeeId = User::whereIn('username',$usernames)->pluck('id')->toArray();
-            /* $empIdsStr = implode(",",$employeeId);
-            $updateID = Project::where('id',$ID)->update(['assign_employees'=>$empIdsStr]); */
             if(!blank($employee)){
             foreach($employeeId as $value){
                 ProjectAssignedDetails::create([

@@ -114,24 +114,15 @@ class AdminController extends Controller
             'new_confirm_password' => 'required|same:new_password' 
         ]); 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 201);
+            return $this->sendSingleFieldError($validator->errors()->first(),201,201);
         }
-        $data = $request->all();
-        if (!\Hash::check($data['current_password'], auth()->user()->password)) { 
+        $user = \Auth::user();
+        if (!\Hash::check($request->current_password, \Auth::user()->password)) { 
+           return $this->sendSingleFieldError('You have entered the wrong current password',201,201);
+        } 
 
-           return response()->json(['status' => 'You have entered the wrong current password' ],201);
-
-        } else { 
-
-            $user = User::find(Auth::id());
-            $updatePasword = $user->update([ 'password' => $data['new_password'] ]);
-            if ($updatePasword) { 
-                return response()->json(['status' => 'Password Updated Successfully!'],200);
-            }else { 
-                return response()->json(['status' => 'Data not updated!'],201);
-            }
-
-        }
+        $user->update(['password' => $request->new_password]);
+        return $this->sendResponse((object) [],'Password Updated Successfully!',200,200);
     }
     
         

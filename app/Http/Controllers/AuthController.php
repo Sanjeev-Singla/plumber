@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\ApiBaseController;
 
-class AuthController extends Controller
+class AuthController extends ApiBaseController
 {
     /**
      * register
@@ -33,7 +34,7 @@ class AuthController extends Controller
             'address' => $request['address'],
             'email' => $request['email'],
             "password"=> $request['password'],
-            'status' => "Disable"  
+            'status' => "0"  
         ]);
         if ($data = User::where('email', $email)->first()) {
              $id = $data['id'];
