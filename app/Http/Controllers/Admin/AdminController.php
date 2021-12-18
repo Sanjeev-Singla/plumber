@@ -153,10 +153,10 @@ class AdminController extends Controller
                 return response()->json($validator->errors(), 201);
             }
             
-            \App\Models\User::where('id',$request->user_id)->update(['status'=>\Config::get('constant.users.status.disabled')]);
+            \App\Models\User::whereId($request->user_id)->update(['status'=>\Config::get('constant.users.status.disabled')]);
             return response()->json(['status' => 'User deleted successfully.'],200);
         }
-        return response()->json(['status' => 'Not authorized to perform.'],201);
+        return $this->sendSingleFieldError('Not authorized to perform',401,401);
     }
     
     /**
