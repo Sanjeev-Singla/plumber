@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Vehicle;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Http\Controllers\Admin\ApiBaseController;
 
 
-class VehicleController extends Controller
+class VehicleController extends ApiBaseController
 {
 
     /**
@@ -24,7 +25,7 @@ class VehicleController extends Controller
         if(!blank($request->all())){
             
             $admin = Auth::user();
-		if( $admin['role'] == 0 || $admin['role'] == 1){
+		    if( $admin['role'] == 0 || $admin['role'] == 1){
                 
                 $validator = Validator::make($request->all(), [
                     'vehicle_no' => 'required',
@@ -40,7 +41,7 @@ class VehicleController extends Controller
                     return response()->json($validator->errors(), 201);
                 }
                 $inputs = $request->all();
-                $vehicle = Vehicle::create($inputs);
+                Vehicle::create($inputs);
     			
                 return response()->json(['status' => 'Vehicle Added Successfully!'],  200);
                 
@@ -105,7 +106,7 @@ class VehicleController extends Controller
             }
                 
             
-            $update = Vehicle::where('id',$request->id)->update($request->all());
+            Vehicle::where('id',$request->id)->update($request->all());
             
             return response()->json(['status' => 'Vehicle Updated Successfully!'], 200);
             
@@ -120,42 +121,45 @@ class VehicleController extends Controller
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             $validator = Validator::make($request->all(), [
                 'id' => 'required|numeric|exists:vehicles,id'
-               
             ]);
     
             if ($validator->fails()) {
-                return response()->json($validator->errors(), 201);
+                return $this->sendSingleFieldError($validator->errors()->first(),201,201);
             }
-            $delete = Vehicle::destroy($request->id);
-            if($delete){
-                return response()->json(['status' => 'Vehicle Deleted Successfully']);
-            }else{
-                return response()->json(['status' => 'Something Went Wrong']);
-            }
-            return response()->json(['status' => 'No access!'],  401);
+            Vehicle::destroy($request->id);
+            return $this->sendResponse((object) [],'Vehicle Deleted Successfully',200,200);
         }
-        
+        return $this->sendSingleFieldError('No access!',401,401);
     }
-    
+        
+    /**
+     * allVehicle
+     *
+     * @return void
+     */
     public function allVehicle(){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             $vehicle = Vehicle::all();
-            return response()->json($vehicle, 200);
-        }else{
-            return response()->json(['status' => 'No access!'],  401);
+            return $this->sendResponse($vehicle,'Vehicle List',200,200);
         }
-        
+        return $this->sendSingleFieldError('No access!',401,401);
     }
-    
+        
+    /**
+     * getVehicle , get single vehicle detaiils
+     *
+     * @param  mixed $request
+     * @param  mixed $id
+     * @return void
+     */
     public function getVehicle(Request $request,$id){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             $vehicle = Vehicle::where('id',$id)->get();
-            return response()->json($vehicle, 200);
-        }else{
-            return response()->json(['status' => 'No access!'],  401);
+            return $this->sendResponse($vehicle,'Vehicle Details',200,200);
         }
+        return $this->sendSingleFieldError('No access!',201,201);
     }
    
 }

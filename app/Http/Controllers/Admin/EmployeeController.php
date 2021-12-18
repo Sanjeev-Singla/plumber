@@ -109,7 +109,7 @@ class EmployeeController extends Controller
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 201);
             }
-            if($request['email'] == TRUE){
+            if($request['email']){
                  $validator = Validator::make($request->all(), [
                        'email' => 'required|unique:users,email',
 

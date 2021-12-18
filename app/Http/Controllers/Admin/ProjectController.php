@@ -9,9 +9,10 @@ use App\Models\User;
 use App\Models\ProjectAssignedDetails;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Http\Controllers\Admin\ApiBaseController;
 
 
-class ProjectController extends Controller
+class ProjectController extends ApiBaseController
 {
 
     /**
@@ -167,25 +168,23 @@ class ProjectController extends Controller
             $employee=  $request['assign_employees'];
             $usernames = explode(',', $employee);
             $employeeId = User::whereIn('username',$usernames)->pluck('id')->toArray();
-            // $empIdsStr = implode(",",$employeeId);
-            // $updateID = Project::where('id',$ID)->update(['assign_employees'=>$empIdsStr]);
+            /* $empIdsStr = implode(",",$employeeId);
+            $updateID = Project::where('id',$ID)->update(['assign_employees'=>$empIdsStr]); */
             if(!blank($employee)){
             foreach($employeeId as $value){
-                $assign = ProjectAssignedDetails::create([
+                ProjectAssignedDetails::create([
                     'user_id' => $value,
                     'project_id' => $ID
                 ]);
             }
                 return response()->json(['status' => 'Assigned Successfully!'], 202);
             }else{
-                $employeeId = User::whereIn('username',$usernames)->pluck('id')->toArray();
                 $unassignedDate  = date('Y-m-d H:i:s');
-                $updateID = ProjectAssignedDetails::where('project_id',$ID)->update(['unassigned_date'=>$unassignedDate]);
+                ProjectAssignedDetails::where('project_id',$ID)->update(['unassigned_date'=>$unassignedDate]);
                 return response()->json(['status' => 'Unassigned Successfully!'], 202);
             }
-        }else{
-            return response()->json(['status' => 'No access!'],  401);
         }
+        return $this->sendSingleFieldError('No access!',401,401);
     }
     
     
@@ -200,9 +199,8 @@ class ProjectController extends Controller
             });
 
             return response()->json($projects, 200);
-        }else{
-            return response()->json(['status' => 'No access!'],  401);
         }
+        return $this->sendSingleFieldError('No access!',401,401);
     }
     
     public function getProject($id){
@@ -210,9 +208,8 @@ class ProjectController extends Controller
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             $project = Project::where('id',$id)->get();
             return response()->json($project, 200);
-        }else{
-            return response()->json(['status' => 'No access!'],  401);
         }
+        return $this->sendSingleFieldError('No access!',401,401);
     }
     
     public function assignProjectListing(){
@@ -220,9 +217,8 @@ class ProjectController extends Controller
         
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             return response()->json($admin->users, 200);
-        }else{
-            return response()->json(['status' => 'No access!'],  401);
         }
+        return $this->sendSingleFieldError('No access!',401,401);
     }
     
     public function deleteProject(Request $request){
@@ -232,17 +228,14 @@ class ProjectController extends Controller
                 'project_id' => 'required|numeric|exists:projects,id'
                
             ]);
-    
             if ($validator->fails()) {
-                return response()->json($validator->errors(), 201);
+                return $this->sendSingleFieldError($validator->errors()->first(),201,201);
             }
             
             Project::destroy($request->project_id);
-            return response()->json(['status' => 'Project Deleted Successfully']);
-        }else{
-            return response()->json(['status' => 'No access!'],  401);
+            return $this->sendResponse((object) [],'Project Deleted Successfully',200,200);
         }
-        
+        return $this->sendSingleFieldError('No access!',401,401);
     }
    
 }
