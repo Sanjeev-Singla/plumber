@@ -221,7 +221,7 @@ class EmployeeController extends ApiBaseController
         $user = Auth::user();
 		if( $user['role'] == 0 || $user['role'] == 1){
             $user = User::where('status',\Config::get('constant.users.status.enabled'))
-                    ->where('role',\Config::get('constant.users.status.employee'))
+                    ->where('role',\Config::get('constant.users.role.employee'))
                     ->orderBy('first_name','ASC')
                     ->get();
             return $this->sendResponse($user,'Employee list',200,200);
