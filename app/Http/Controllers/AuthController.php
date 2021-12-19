@@ -26,7 +26,7 @@ class AuthController extends ApiBaseController
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 201);
+            return $this->sendSingleFieldError($validator->errors()->first(),201,201);
         }
         $inputs = $request->all();
         $inputs['status'] = \Config::get('constant.users.status.enabled');
