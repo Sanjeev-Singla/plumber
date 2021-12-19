@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Http\Controllers\Admin\ApiBaseController;
 
-
-class EmployeeController extends Controller
+class EmployeeController extends ApiBaseController
 {
 
     /**
