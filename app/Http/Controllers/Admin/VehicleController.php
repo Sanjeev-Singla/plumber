@@ -150,7 +150,7 @@ class VehicleController extends ApiBaseController
                         ->get();
 
             $vehicles->transform(function($vehicle){
-                $vehicle->alloted_user = isset($vehicle->allotedUser)?$vehicle->allotedUser:[];
+                $vehicle->alloted_user = isset($vehicle->allotedUser)?$vehicle->allotedUser:(object) [];
                 return $vehicle;
             });
 
