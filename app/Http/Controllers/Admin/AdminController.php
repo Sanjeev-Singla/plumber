@@ -208,13 +208,15 @@ class AdminController extends Controller
                 'status'        => 'required'
             ]);
             if ($validator->fails()) {
-                return response()->json($validator->errors(), 201);
+                return $this->sendSingleFieldError($validator->errors()->first(),201,201);
             }
             $inputs = $request->all();
             unset($inputs['user_id']);
             \App\Models\User::where('id',$request->user_id)->update($inputs);
-            return response()->json(['status' => 'User updated successfully.'],200);
+            return $this->sendResponse((object) [],'User updated successfully.',200,200);
         }
-        return response()->json(['status' => 'Not authorized to perform.'],201);
+        return $this->sendSingleFieldError('Not authorized to perform.',401,401);
     }
+
+
 }

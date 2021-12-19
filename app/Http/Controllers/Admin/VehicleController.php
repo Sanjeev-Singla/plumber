@@ -34,7 +34,6 @@ class VehicleController extends ApiBaseController
                     'model' => 'required',
                     'type' => 'required',
                     'km' => 'required'
-                   
                 ]);
         
                 if ($validator->fails()) {
