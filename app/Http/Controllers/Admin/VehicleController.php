@@ -21,75 +21,27 @@ class VehicleController extends ApiBaseController
      */
      
     public function addVehicle(Request $request){
-        
-        if(!blank($request->all())){
-            
-            $admin = Auth::user();
-		    if( $admin['role'] == 0 || $admin['role'] == 1){
-                
-                $validator = Validator::make($request->all(), [
-                    'vehicle_no' => 'required',
-                    'description' => 'required',
-                    'manufacturer' => 'required',
-                    'model' => 'required',
-                    'type' => 'required',
-                    'km' => 'required',
-                    'alloted_user_id'=>"nullable|numeric|exists:users,id"
-                ]);
-        
-                if ($validator->fails()) {
-                    return response()->json($validator->errors(), 201);
-                }
-                $inputs = $request->all();
-                Vehicle::create($inputs);
-    			
-                return response()->json(['status' => 'Vehicle Added Successfully!'],  200);
-                
+        $admin = Auth::user();
+        if( $admin['role'] == 0 || $admin['role'] == 1){
+            $validator = Validator::make($request->all(), [
+                'vehicle_no' => 'required',
+                'description' => 'required',
+                'manufacturer' => 'required',
+                'model' => 'required',
+                'type' => 'required',
+                'km' => 'required',
+                'alloted_user_id'=>"nullable|numeric|exists:users,id"
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 201);
             }
-            return $this->sendSingleFieldError('No access!',401,401);
-        }/* else{
-                $data= Array ( 
-                                'vehicle_no' => 
-                                    array (
-                                          'required' => 1 ,
-                                          'type' => 'int'
-                                     ),
-                                'description' => 
-                                    array (
-                                          'required' => 1 ,
-                                          'type' => 'varchar'
-                                     ),
-                                'manufacturer' => 
-                                    array (
-                                          'required' => 1 ,
-                                          'type' => 'varchar'
-                                     ),
-                                'km' => 
-                                    array (
-                                          'required' => 1 ,
-                                          'type' => 'int'
-                                     ),
-                                'model' => 
-                                    array (
-                                          'required' => 1 ,
-                                          'type' => 'varchar'
-                                     ),
-                                'type' => 
-                                    array (
-                                          'required' => 1 ,
-                                          'type' => 'varchar'
-                                     ),
-                                'status' => 
-                                    array(
-                                          'required' => 1,
-                                          'type' => 'int',
-                                          'comment' => '0=disable, 1=enable'
-                                         )
-                            
-                            );
-            return response()->json($data, 201);
-        } */
-         
+            
+            $inputs = $request->all();
+            Vehicle::create($inputs);
+            
+            return $this->sendResponse((object) [],'Vehicle Added Successfully!',200,200);
+        }
+        return $this->sendSingleFieldError('No access!',401,401);
     }
         
     /**
