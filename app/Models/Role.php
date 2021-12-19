@@ -16,7 +16,7 @@ class Vehicle extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function allotedUser(): BelongsTo
+    public function allotedUser()
     {
         return $this->belongsTo(User::class, 'alloted_user_id', 'id');
     }
