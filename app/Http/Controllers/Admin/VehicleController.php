@@ -146,7 +146,8 @@ class VehicleController extends ApiBaseController
     public function allVehicle(){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
-            $vehicle = Vehicle::where('status',\Config::get('constant.vehicles.status.enabled'))
+            $vehicle = Vehicle::with('allotedUser')
+                        ->where('status',\Config::get('constant.vehicles.status.enabled'))
                         ->get();
 
             return $this->sendResponse($vehicle,'Vehicle List',200,200);
