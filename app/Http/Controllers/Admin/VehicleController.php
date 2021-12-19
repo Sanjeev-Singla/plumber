@@ -174,5 +174,25 @@ class VehicleController extends ApiBaseController
         }
         return $this->sendSingleFieldError('No access!',201,201);
     }
-   
+       
+    /**
+     * employeeList
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function employeeList(Request $request)
+    {
+        $admin = Auth::user();
+		if( $admin['role'] == 0 || $admin['role'] == 1){
+            $users = User::where('status',\Config::get('contant.users.status.enabled'))
+                    ->where('role',\Config::get('contant.users.status.employee'))
+                    ->select(['id','first_name','last_name'])
+                    ->orderBy('first_name','ASC')
+                    ->get();
+
+            return $this->sendResponse($users,'Vehicle Details',200,200);
+        }
+        return $this->sendSingleFieldError('No access!',201,201);
+    }
 }

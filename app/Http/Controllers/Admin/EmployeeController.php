@@ -220,8 +220,11 @@ class EmployeeController extends Controller
     public function allEmployee(){
         $user = Auth::user();
 		if( $user['role'] == 0 || $user['role'] == 1){
-            $user = User::all();
-            return response()->json($user, 200);
+            $user = User::where('status',\Config::get('contant.users.status.enabled'))
+                    ->where('role',\Config::get('contant.users.status.employee'))
+                    ->orderBy('first_name','ASC')
+                    ->get();
+            return $this->sendResponse($user,'Vehicle Details',200,200);
         }else{
             return response()->json(['status' => 'No access!'],  401);
         }
