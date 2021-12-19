@@ -33,7 +33,8 @@ class VehicleController extends ApiBaseController
                     'manufacturer' => 'required',
                     'model' => 'required',
                     'type' => 'required',
-                    'km' => 'required'
+                    'km' => 'required',
+                    'alloted_user_id'=>"nullable|numeric|exists:users,id"
                 ]);
         
                 if ($validator->fails()) {
@@ -44,10 +45,9 @@ class VehicleController extends ApiBaseController
     			
                 return response()->json(['status' => 'Vehicle Added Successfully!'],  200);
                 
-            }else{
-                return response()->json(['status' => 'No access!'],  401);
             }
-        }else{
+            return $this->sendSingleFieldError('No access!',401,401);
+        }/* else{
                 $data= Array ( 
                                 'vehicle_no' => 
                                     array (
@@ -88,33 +88,40 @@ class VehicleController extends ApiBaseController
                             
                             );
             return response()->json($data, 201);
-        }
+        } */
          
     }
-    
+        
+    /**
+     * editVehicle
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function editVehicle(Request $request){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             
             $validator = Validator::make($request->all(), [
-                            'id' => 'required',
-            ]);
-        
+                            'id' => 'required|exists:vehicles,id',
+                        ]);
             if ($validator->fails()) {
-                    return response()->json($validator->errors(), 201);
+                return $this->sendSingleFieldError($validator->errors()->first(),201,201);
             }
-                
             
             Vehicle::where('id',$request->id)->update($request->all());
+            return $this->sendResponse((object) [],'Vehicle Updated Successfully',200,200);
             
-            return response()->json(['status' => 'Vehicle Updated Successfully!'], 200);
-            
-        }else{
-            return response()->json(['status' => 'No access!'],  401);
         }
-        
+        return $this->sendSingleFieldError('No access!',401,401);
     }
-    
+        
+    /**
+     * deleteVehicle
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function deleteVehicle(Request $request){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
@@ -139,7 +146,10 @@ class VehicleController extends ApiBaseController
     public function allVehicle(){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
-            $vehicle = Vehicle::all();
+            $vehicle = Vehicle::with('allotedUser')
+                        ->where('status',\Config::get('constant.vehicles.status.active'))
+                        ->get();
+
             return $this->sendResponse($vehicle,'Vehicle List',200,200);
         }
         return $this->sendSingleFieldError('No access!',401,401);

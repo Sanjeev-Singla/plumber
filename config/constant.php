@@ -13,5 +13,12 @@ return [
             'enabled'   =>  1
         ]
     ],
+
+    'vehicles'  =>  [   
+        'status'    =>  [
+            'disabled'  =>  0,
+            'enabled'   =>  1
+        ]
+    ]
     
 ];

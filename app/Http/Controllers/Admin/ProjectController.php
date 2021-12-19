@@ -85,7 +85,13 @@ class ProjectController extends ApiBaseController
         }
     }
     
-    
+        
+    /**
+     * updateProject
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function updateProject(Request $request){
         $user = Auth::user();
         if( !blank($request->all())  ){
@@ -153,7 +159,14 @@ class ProjectController extends ApiBaseController
           
         
     }
-    
+        
+    /**
+     * assignProject
+     *
+     * @param  mixed $request
+     * @param  mixed $ID
+     * @return void
+     */
     public function assignProject(Request $request,$ID){
         $admin = Auth::user();
         if($admin['role'] == 1){
@@ -177,7 +190,12 @@ class ProjectController extends ApiBaseController
         return $this->sendSingleFieldError('No access!',401,401);
     }
     
-    
+        
+    /**
+     * projectListing
+     *
+     * @return void
+     */
     public function projectListing(){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
@@ -192,7 +210,13 @@ class ProjectController extends ApiBaseController
         }
         return $this->sendSingleFieldError('No access!',401,401);
     }
-    
+        
+    /**
+     * getProject
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function getProject($id){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
@@ -202,7 +226,12 @@ class ProjectController extends ApiBaseController
         }
         return $this->sendSingleFieldError('No access!',401,401);
     }
-    
+        
+    /**
+     * assignProjectListing
+     *
+     * @return void
+     */
     public function assignProjectListing(){
         $admin = Auth::user();
         
@@ -211,7 +240,13 @@ class ProjectController extends ApiBaseController
         }
         return $this->sendSingleFieldError('No access!',401,401);
     }
-    
+        
+    /**
+     * deleteProject
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function deleteProject(Request $request){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
