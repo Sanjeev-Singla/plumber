@@ -23,65 +23,28 @@ class ProjectController extends ApiBaseController
      */
     public function addProject(Request $request)
     {
-    	if(!blank($request->all())){
-                
-            $admin = Auth::user();
+        $admin = Auth::user();
 
-    		if( $admin['role'] == 0 || $admin['role'] == 1){
-                    $validator = Validator::make($request->all(), [
-                        'project_name' => 'required',
-                        'no_of_floors' => 'required',
-                        'no_of_rooms' => 'required',
-                        'location' => 'required'
-                       // 'start_date' => 'required'
-                    ]);
-            
-                    if ($validator->fails()) {
-                        return response()->json($validator->errors(), 201);
-                    }
-                    
-                    $inputs = $request->all();
-                    
-                    Project::create($inputs);
-                    
-                    return response()->json(['status' => 'Added Successfully!'], 202);
-            }else{
-                return response()->json(['status' => 'No access!'],  401);
-            }
+        if( $admin['role'] == 0 || $admin['role'] == 1){
+                $validator = Validator::make($request->all(), [
+                    'project_name' => 'required',
+                    'no_of_floors' => 'required',
+                    'no_of_rooms' => 'required',
+                    'location' => 'required'
+                    // 'start_date' => 'required'
+                ]);
+        
+                if ($validator->fails()) {
+                    return response()->json($validator->errors(), 201);
+                }
+                
+                $inputs = $request->all();
+                
+                Project::create($inputs);
+                
+                return response()->json(['status' => 'Added Successfully!'], 202);
         }else{
-            $data= [
-                'project_name' => 
-                    array (
-                            'required' => 1 ,
-                            'type' => 'varchar'
-                        ),
-                'no_of_floors' => 
-                    array (
-                            'required' => 1 ,
-                            'type' => 'int'
-                        ),
-                'no_of_rooms' => 
-                    array (
-                            'required' => 1 ,
-                            'type' => 'int'
-                        ),
-                'location' => 
-                    array (
-                            'required' => 1 ,
-                            'type' => 'varchar'
-                        ),
-                'start_date' => 
-                    array (
-                            'required' => 1 ,
-                            'type' => 'YYYY/MM/DD'
-                        ),
-                'status' => [
-                            'required' => 1 ,
-                            'type' => 'int',
-                            'comment' => '0=disable, 1=enable'
-                        ]
-            ];
-            return response()->json($data, 201);
+            return response()->json(['status' => ACCESS_DENIED],  401);
         }
     }
     
@@ -94,70 +57,19 @@ class ProjectController extends ApiBaseController
      */
     public function updateProject(Request $request){
         $user = Auth::user();
-        if( !blank($request->all())  ){
-            
-            if( $user['role'] == 0 || $user['role'] == 1){
+        if( $user['role'] == 0 || $user['role'] == 1){
 
-                $validator = Validator::make($request->all(), [
-                    'id' => 'required',
-                ]);
-                if ($validator->fails()) {
-                    return $this->sendSingleFieldError($validator->errors()->first(),201,201);
-                }
-                Project::where('id',$request->id)->update($request->all());
-                
-                return response()->json(['success' => 'updated successfully'], 200);
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return $this->sendSingleFieldError($validator->errors()->first(),201,201);
             }
-            return $this->sendSingleFieldError('No access!',401,401);
+            Project::where('id',$request->id)->update($request->all());
             
-        }else{
-         
-            $data= Array ( 
-                            'id' => 
-                            array (
-                                  'required' => 1 ,
-                                  'type' => 'int',
-                                  'comment' => 'project id is required'
-                             ),
-                             
-                            'project_name' => 
-                                array (
-                                      'required' => 1 ,
-                                      'type' => 'varchar'
-                                 ),
-                            'no_of_floors' => 
-                                array (
-                                      'required' => 1 ,
-                                      'type' => 'int'
-                                 ),
-                            'no_of_rooms' => 
-                                array (
-                                      'required' => 1 ,
-                                      'type' => 'int'
-                                 ),
-                            'location' => 
-                                array (
-                                      'required' => 1 ,
-                                      'type' => 'varchar'
-                                 ),
-                            'start_date' => 
-                                array (
-                                      'required' => 1 ,
-                                      'type' => 'YYYY/MM/DD'
-                                 ),
-                           'status' => 
-                                array (
-                                      'required' => 1 ,
-                                      'type' => 'int',
-                                      'comment' => '0=disable, 1=enable'
-                                 )     
-                        
-                        );
-                return response()->json($data, 201);
-                
-          }     
-          
-        
+            return response()->json(['success' => 'updated successfully'], 200);
+        }
+        return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
     }
         
     /**
@@ -187,7 +99,7 @@ class ProjectController extends ApiBaseController
                 return response()->json(['status' => 'Unassigned Successfully!'], 202);
             }
         }
-        return $this->sendSingleFieldError('No access!',401,401);
+        return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
     }
     
         
@@ -208,7 +120,7 @@ class ProjectController extends ApiBaseController
 
             return $this->sendResponse($projects,'Projects List',200,200);
         }
-        return $this->sendSingleFieldError('No access!',401,401);
+        return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
     }
         
     /**
@@ -238,7 +150,7 @@ class ProjectController extends ApiBaseController
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             return $this->sendResponse($admin->users,'Assigned project list',200,200);
         }
-        return $this->sendSingleFieldError('No access!',401,401);
+        return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
     }
         
     /**
@@ -261,7 +173,7 @@ class ProjectController extends ApiBaseController
             Project::destroy($request->project_id);
             return $this->sendResponse((object) [],'Project Deleted Successfully',200,200);
         }
-        return $this->sendSingleFieldError('No access!',401,401);
+        return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
     }
    
 }

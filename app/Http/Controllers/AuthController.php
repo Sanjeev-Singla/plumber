@@ -18,29 +18,20 @@ class AuthController extends ApiBaseController
     public function register(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-           'email' => 'required|unique:users,email',
-            'password' => 'required|min:3'
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|unique:users,email',
+            'password' => 'required|min:3',
+            'username'=>'required|unique:users,username'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 201);
         }
-        $email = $request['email'];
-        $username = strstr($email,'@',true);
-        $user = User::create([
-            'username'=> $username,
-            'first_name' => $request['first_name'],
-            'last_name' => $request['last_name'],
-            'address' => $request['address'],
-            'email' => $request['email'],
-            "password"=> $request['password'],
-            'status' => "0"  
-        ]);
-        if ($data = User::where('email', $email)->first()) {
-             $id = $data['id'];
-            $update['username'] =  $username ."_" . $id;
-            User::where('email', $email)->update($update);
-        }
+        $inputs = $request->all();
+        $inputs['status'] = \Config::get('constant.users.status.enabled');
+        $inputs['role'] = \Config::get('constant.users.role.admin');
+        $user = User::create($inputs);
         
         $user->token = $user->createToken('plumber')->accessToken;
         return response()->json($user, 200);
