@@ -8,9 +8,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use hash;
+use App\Http\Controllers\Admin\ApiBaseController;
 
 
-class AdminController extends Controller
+class AdminController extends ApiBaseController
 {
          
      /**
