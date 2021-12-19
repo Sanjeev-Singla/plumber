@@ -220,14 +220,13 @@ class EmployeeController extends ApiBaseController
     public function allEmployee(){
         $user = Auth::user();
 		if( $user['role'] == 0 || $user['role'] == 1){
-            $user = User::where('status',\Config::get('contant.users.status.enabled'))
+            $user = User::where('status',\Config::get('constant.users.status.enabled'))
                     ->where('role',\Config::get('constant.users.status.employee'))
                     ->orderBy('first_name','ASC')
                     ->get();
-            return $this->sendResponse($user,'Vehicle Details',200,200);
-        }else{
-            return response()->json(['status' => 'No access!'],  401);
+            return $this->sendResponse($user,'Employee list',200,200);
         }
+        return $this->sendSingleFieldError('No access!',401,401);
     }
 
     public function singleEmployee($id){
