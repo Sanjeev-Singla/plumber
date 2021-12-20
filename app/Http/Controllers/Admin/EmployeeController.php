@@ -34,22 +34,22 @@ class EmployeeController extends ApiBaseController
     public function addEmployee(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'first_name' => FIRST_NAME_VALIDATION,
+            'last_name' => FIRST_NAME_VALIDATION,
             'address' => 'required',
             'email' => 'required|unique:users,email',
             'password' => 'required',
             'username'  =>'required|unique:users,username'
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 201);
+            return $this->sendSingleFieldError($validator->errors()->first(),201,201);
         }
 
         $inputs = $request->all();
         $inputs['status'] = \Config::get('constant.users.status.enabled');
         $user = User::create($inputs);
         $user->token = $user->createToken('plumber')->accessToken;
-        return response()->json($user, 200);
+        return $this->sendResponse($user, 'User added successfully.',200,200);
     }
         
     /**
@@ -58,18 +58,19 @@ class EmployeeController extends ApiBaseController
      * @param  mixed $request
      * @return void
      */
-    public function updateEmployee(Request $request){
+    public function updateEmployee(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'id' => 'required',
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'first_name' => FIRST_NAME_VALIDATION,
+            'last_name' => FIRST_NAME_VALIDATION,
             'email' => 'required|unique:users,email',
             'password' => 'required',
             'address' => 'required',
             'username'  =>'nullable|unique:users,username'
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 201);
+            return $this->sendSingleFieldError($validator->errors()->first(),201,201);
         }
 
         $userDetails =  User::find($request->id);
@@ -80,7 +81,7 @@ class EmployeeController extends ApiBaseController
         }
 
         $userDetails->update($input);
-        return response()->json(['error' => 'Data updated Successfully'], 200);
+        return $this->sendResponse((object) [], 'Employee Deleted Successfully',200,200);
     }
      
          
@@ -90,17 +91,17 @@ class EmployeeController extends ApiBaseController
      * @param  mixed $request
      * @return void
      */
-    public function deleteEmployee(Request $request){
+    public function deleteEmployee(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|numeric|exists:users,id'
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 201);
+            return $this->sendSingleFieldError($validator->errors()->first(),201,201);
         }
-        
-        User::destroy($request->user_id);
-        return response()->json(['status' => 'User Deleted Successfully']);
+        User::update('status',\Config::get('constant.users.status.disabled'));
+        return $this->sendResponse((object) [], 'User Deleted Successfully',200,200);
     }
         
     /**
@@ -108,7 +109,8 @@ class EmployeeController extends ApiBaseController
      *
      * @return void
      */
-    public function allEmployee(){
+    public function allEmployee()
+    {
         $users = User::where('status',\Config::get('constant.users.status.enabled'))
                 ->where('role',\Config::get('constant.users.role.employee'))
                 ->orderBy('first_name','ASC')
@@ -122,7 +124,8 @@ class EmployeeController extends ApiBaseController
      * @param  mixed $id
      * @return void
      */
-    public function singleEmployee($id){
+    public function singleEmployee($id)
+    {
         $userDetails = User::where('id',$id)->get();
         return response()->json($userDetails, 200);
     }

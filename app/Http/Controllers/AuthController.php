@@ -18,8 +18,8 @@ class AuthController extends ApiBaseController
     public function register(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'first_name' => FIRST_NAME_VALIDATION,
+            'last_name' => FIRST_NAME_VALIDATION,
             'email' => 'required|unique:users,email',
             'password' => 'required|min:3',
             'username'=>'required|unique:users,username'
@@ -40,18 +40,10 @@ class AuthController extends ApiBaseController
     public function login(Request $request)
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
-            $responseArray = [];
-            $responseArray['token'] = $user->createToken('MyApp')->accessToken;
-            $responseArray['name'] = $user->name;
-            $responseArray['email'] = $user->email;
-            $responseArray['first_name'] = $user->first_name;
-            $responseArray['last_name'] = $user->last_name;
-            $responseArray['address'] = $user->address;
-            $responseArray['role'] = $user->role;
-            return response()->json($responseArray, 202);
-        } else {
-            return response()->json(['error' => 'Unauthrized'], 202);
+            $user = User::firstWhere('email',$request->email);
+            $user->token = $user->createToken('plumber')->accessToken;
+            return response()->json($user, 200);
         }
+        return $this->sendSingleFieldError('Invalid credentails',201,201);
     }
 }

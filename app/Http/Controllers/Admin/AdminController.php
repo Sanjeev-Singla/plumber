@@ -13,7 +13,13 @@ use App\Http\Controllers\Admin\ApiBaseController;
 
 class AdminController extends ApiBaseController
 {
-         
+    public function __construct()
+    {
+        $user = Auth::user();
+		if( $user['role'] != 0 ){
+            return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
+        }
+    }
      /**
       * addUser
       *
@@ -21,83 +27,24 @@ class AdminController extends ApiBaseController
       * @return void
       */
      public function addUser(Request $request){
-		 
-        if(!blank($request->all())){
-            $user = Auth::user();
-            if($user['role'] == 0){
-                
-                $validator = Validator::make($request->all(), [
-                    'first_name'=>  'required|alpha',
-                    'last_name' =>  'required|alpha',
-                    'username'  =>  'required|unique:users,username',
-					'email'     =>  'required|unique:users,email',
-                    'password'  =>  'required',
-                    "status"    =>  'required'
-                ]);
-        
-                if ($validator->fails()) {
-                    return response()->json($validator->errors(), 201);
-                }
-
-                $inputs = $request->all();
-                $inputs['role'] = 1;
-                $user = User::create($inputs);
-
-                $user->token = $user->createToken('plumber')->accessToken;
-                return response()->json($user, 200);
-            }
-            return response()->json(['status' => 'Only Super Admin can add Employee and Admin!'],  401);
-        }else{
-            
-             $data= Array (
-                        'username' => 
-                            array (
-                                  'required' => 1 ,
-                                  'type' => 'var'
-                             ),
-                        'first_name' => 
-                            array (
-                                  'required' => 1 ,
-                                  'type' => 'var'
-                             ),
-                        'last_name' => 
-                            array (
-                                  'required' => 1 ,
-                                  'type' => 'var'
-                             ),
-                        'address' => 
-                            array (
-                                  'required' => 1 ,
-                                  'type' => 'var'
-                             ),
-                        'email' => 
-                            array (
-                                  'required' => 1 ,
-                                  'type' => 'var'
-                             ),
-                        'password' => 
-                            array (
-                                  'required' => 1 ,
-                                  'type' => 'var'
-                             ),
-						 'status' => 
-                            array (
-                                  'required' => 1 ,
-                                  'type' => 'int',
-                                  'comment' => '0=disable, 1=enable'
-                           ),
-						'role' => 
-                            array (
-                                  'required' => 1 ,
-                                  'type' => 'int',
-								  'comment' => 'super-admin=0, admin=1, employee=2'
-                             )
-                      );
-                    
-            return response()->json($data, 201);
-
+        $validator = Validator::make($request->all(), [
+            'first_name'=>  FIRST_NAME_VALIDATION,
+            'last_name' =>  FIRST_NAME_VALIDATION,
+            'username'  =>  'required|unique:users,username',
+            'email'     =>  'required|unique:users,email',
+            'password'  =>  'required',
+            "status"    =>  'required'
+        ]);
+        if ($validator->fails()) {
+            return $this->sendSingleFieldError($validator->errors()->first(),201,201);
         }
-        
+
+        $inputs = $request->all();
+        $inputs['role'] = \Config::get('constant.users.role.admin');
+        $user = User::create($inputs);
+
+        $user->token = $user->createToken('plumber')->accessToken;
+        return $this->sendResponse($user,'Password Updated Successfully!',200,200);
     }
 	
         
@@ -146,18 +93,16 @@ class AdminController extends ApiBaseController
      */
     public function deleteUser(Request $request)
     {
-        if (\Auth::user()->role == 0) {
-            $validator = Validator::make($request->all(),[ 
-                'user_id'   =>  'required|numeric|exists:users,id'
-            ]); 
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 201);
-            }
-            
-            \App\Models\User::whereId($request->user_id)->update(['status'=>\Config::get('constant.users.status.disabled')]);
-            return response()->json(['status' => 'User deleted successfully.'],200);
+        $validator = Validator::make($request->all(),[ 
+            'user_id'   =>  'required|numeric|exists:users,id'
+        ]); 
+        if ($validator->fails()) {
+            return $this->sendSingleFieldError($validator->errors()->first(),201,201);
         }
-        return $this->sendSingleFieldError('Not authorized to perform',401,401);
+        
+        User::whereId($request->user_id)
+            ->update(['status'=>\Config::get('constant.users.status.disabled')]);
+        return response()->json(['status' => 'User deleted successfully.'],200);
     }
     
     /**
@@ -168,26 +113,23 @@ class AdminController extends ApiBaseController
      */
     public function userList(Request $request)
     {
-        if (\Auth::user()->role == 0) {
-            $validator = Validator::make($request->all(), [ 
-                'page'   =>  'required|numeric'
-            ]); 
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 201);
-            }
-
-            $perPage = 20;
-            $skip = $request->page?20 * ($request->page - 1):0;
-
-            $users = \App\Models\User::where('status',\Config::get('constant.users.status.enabled'))
-                                        ->where('role',\Config::get('constant.users.role.admin'))
-                                        ->orderBy('id','DESC')
-                                        ->take($perPage)
-                                        ->skip($skip)
-                                        ->get();
-            return response()->json(['userList'=>$users,'status' => 'users list.'],200);
+        $validator = Validator::make($request->all(), [ 
+            'page'   =>  'required|numeric'
+        ]); 
+        if ($validator->fails()) {
+            return $this->sendSingleFieldError($validator->errors()->first(),201,201);
         }
-        return response()->json(['status' => 'Not authorized to perform.'],201);
+
+        $perPage = 20;
+        $skip = $request->page?20 * ($request->page - 1):0;
+
+        $users = User::where('status',\Config::get('constant.users.status.enabled'))
+                    ->where('role',\Config::get('constant.users.role.admin'))
+                    ->orderBy('id','DESC')
+                    ->take($perPage)
+                    ->skip($skip)
+                    ->get();
+        return response()->json(['userList'=>$users,'status' => 'users list.'],200);
     }
     
     /**
@@ -198,26 +140,21 @@ class AdminController extends ApiBaseController
      */
     public function updateUser(Request $request)
     {
-        if(\Auth::user()->role == 0){
-            $validator = Validator::make($request->all(), [
-                'first_name'    => 'required|alpha',
-                'last_name'     => 'required|alpha',
-                'username'      => 'required|unique:users,username',
-                'email'         => 'required|email',
-                'user_id'       => 'required|numeric|exists:users,id',
-                'password'      => 'required|min:6|max:255',
-                'status'        => 'required'
-            ]);
-            if ($validator->fails()) {
-                return $this->sendSingleFieldError($validator->errors()->first(),201,201);
-            }
-            $inputs = $request->all();
-            unset($inputs['user_id']);
-            \App\Models\User::where('id',$request->user_id)->update($inputs);
-            return $this->sendResponse((object) [],'User updated successfully.',200,200);
+        $validator = Validator::make($request->all(), [
+            'first_name'    => 'required|alpha',
+            'last_name'     => 'required|alpha',
+            'username'      => 'nullable|unique:users,username',
+            'email'         => 'nullable|email',
+            'user_id'       => 'required|numeric|exists:users,id',
+            'password'      => 'required|min:6|max:255',
+            'status'        => 'required'
+        ]);
+        if ($validator->fails()) {
+            return $this->sendSingleFieldError($validator->errors()->first(),201,201);
         }
-        return $this->sendSingleFieldError('Not authorized to perform.',401,401);
+        $inputs = $request->all();
+        unset($inputs['user_id']);
+        \App\Models\User::where('id',$request->user_id)->update($inputs);
+        return $this->sendResponse((object) [],'User updated successfully.',200,200);
     }
-
-
 }

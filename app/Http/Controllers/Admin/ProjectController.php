@@ -55,7 +55,8 @@ class ProjectController extends ApiBaseController
      * @param  mixed $request
      * @return void
      */
-    public function updateProject(Request $request){
+    public function updateProject(Request $request)
+    {
         $user = Auth::user();
         if( $user['role'] == 0 || $user['role'] == 1){
 
@@ -79,7 +80,8 @@ class ProjectController extends ApiBaseController
      * @param  mixed $ID
      * @return void
      */
-    public function assignProject(Request $request,$ID){
+    public function assignProject(Request $request,$ID)
+    {
         $admin = Auth::user();
         if($admin['role'] == 1){
             $employee=  $request['assign_employees'];
@@ -108,7 +110,8 @@ class ProjectController extends ApiBaseController
      *
      * @return void
      */
-    public function projectListing(){
+    public function projectListing()
+    {
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             $projects = Project::all();
@@ -129,7 +132,8 @@ class ProjectController extends ApiBaseController
      * @param  mixed $id
      * @return void
      */
-    public function getProject($id){
+    public function getProject($id)
+    {
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             $project = Project::where('id',$id)->get();
@@ -144,7 +148,8 @@ class ProjectController extends ApiBaseController
      *
      * @return void
      */
-    public function assignProjectListing(){
+    public function assignProjectListing()
+    {
         $admin = Auth::user();
         
 		if( $admin['role'] == 0 || $admin['role'] == 1){
@@ -159,7 +164,8 @@ class ProjectController extends ApiBaseController
      * @param  mixed $request
      * @return void
      */
-    public function deleteProject(Request $request){
+    public function deleteProject(Request $request)
+    {
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
             $validator = Validator::make($request->all(), [
@@ -169,8 +175,7 @@ class ProjectController extends ApiBaseController
             if ($validator->fails()) {
                 return $this->sendSingleFieldError($validator->errors()->first(),201,201);
             }
-            
-            Project::destroy($request->project_id);
+            Project::update('status',\Config::get('constant.projects.status.disabled'));
             return $this->sendResponse((object) [],'Project Deleted Successfully',200,200);
         }
         return $this->sendSingleFieldError(ACCESS_DENIED,401,401);

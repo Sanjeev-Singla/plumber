@@ -19,6 +19,12 @@ return [
             'disabled'  =>  0,
             'enabled'   =>  1
         ]
+    ],
+
+    'projects'  =>  [
+        'status'    =>  [
+            'disabled'  =>  0,
+            'enabled'   =>  1
+        ]
     ]
-    
 ];
