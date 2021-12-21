@@ -16,6 +16,7 @@ class AdminController extends ApiBaseController
     public function __construct()
     {
         $user = Auth::user();
+        dd($user);
 		if( $user['role'] != 0 ){
             return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
         }
