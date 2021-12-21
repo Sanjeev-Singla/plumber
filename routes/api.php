@@ -79,5 +79,5 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::get('single-safety/{id}',[Admin\SafetyController::class,'getSafety']);
 
 
-    
+    Route::post('check-unique',[Admin\AdminController::class,'checkUnique']);
 });

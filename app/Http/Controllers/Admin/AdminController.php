@@ -133,6 +133,23 @@ class AdminController extends ApiBaseController
     }
     
     /**
+     * checkUnique
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function checkUnique(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            $request->param  => 'unique:users,'.$request->param,
+        ]);
+        if ($validator->fails()) {
+            return $this->sendSingleFieldError($validator->errors()->first(),201,201);
+        }
+        return $this->sendResponse((object) [],'Valid.',200,200);
+    }
+    
+    /**
      * updateUser
      *
      * @param  mixed $request
