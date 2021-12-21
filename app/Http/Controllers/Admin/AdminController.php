@@ -168,8 +168,8 @@ class AdminController extends ApiBaseController
         $validator = Validator::make($request->all(), [
             'first_name'    => 'required|alpha',
             'last_name'     => 'required|alpha',
-            'username'      => 'nullable|unique:users,username',
-            'email'         => 'nullable|email',
+            'username'      => 'required',
+            'email'         => 'required|email',
             'user_id'       => 'required|numeric|exists:users,id',
             'password'      => 'required|min:6|max:255',
             'status'        => 'required'
