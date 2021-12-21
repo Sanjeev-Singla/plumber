@@ -140,6 +140,7 @@ class AdminController extends ApiBaseController
      */
     public function checkUnique(Request $request)
     {
+        dd($request->all());
         $validator = Validator::make($request->all(), [
             $request->param  => 'unique:users,'.$request->param,
         ]);
