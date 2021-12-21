@@ -13,14 +13,14 @@ use App\Http\Controllers\Admin\ApiBaseController;
 
 class AdminController extends ApiBaseController
 {
-    public function __construct()
+    /* public function __construct()
     {
         $user = Auth::user();
         dd($user);
 		if( $user['role'] != 0 ){
             return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
         }
-    }
+    } */
      /**
       * addUser
       *
@@ -141,6 +141,8 @@ class AdminController extends ApiBaseController
      */
     public function checkUnique(Request $request)
     {
+        $user = Auth::user();
+        dd($user);
         dd($request->all());
         $validator = Validator::make($request->all(), [
             $request->param  => 'unique:users,'.$request->param,
