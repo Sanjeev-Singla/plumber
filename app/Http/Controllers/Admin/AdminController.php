@@ -13,14 +13,13 @@ use App\Http\Controllers\Admin\ApiBaseController;
 
 class AdminController extends ApiBaseController
 {
-    /* public function __construct()
+    public function checkPermission()
     {
         $user = Auth::user();
-        dd($user);
 		if( $user['role'] != 0 ){
             return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
         }
-    } */
+    }
      /**
       * addUser
       *
@@ -28,6 +27,7 @@ class AdminController extends ApiBaseController
       * @return void
       */
      public function addUser(Request $request){
+        $this->checkPermission();
         $validator = Validator::make($request->all(), [
             'first_name'=>  FIRST_NAME_VALIDATION,
             'last_name' =>  FIRST_NAME_VALIDATION,
@@ -57,6 +57,7 @@ class AdminController extends ApiBaseController
      */
     public function updatePassword(Request $request) 
     {
+        $this->checkPermission();
         $validator = Validator::make($request->all(),[ 
             'current_password' => 'required|different:new_password', 
             'new_password' => 'required|different:current_password', 
@@ -82,6 +83,7 @@ class AdminController extends ApiBaseController
      * @return void
      */
     public function logout(Request $request) {
+        
       Auth::logout();
       return response()->json(['status' => 'logout successfully'],200);
     }
@@ -94,6 +96,7 @@ class AdminController extends ApiBaseController
      */
     public function deleteUser(Request $request)
     {
+        $this->checkPermission();
         $validator = Validator::make($request->all(),[ 
             'user_id'   =>  'required|numeric|exists:users,id'
         ]); 
@@ -114,6 +117,7 @@ class AdminController extends ApiBaseController
      */
     public function userList(Request $request)
     {
+        $this->checkPermission();
         $validator = Validator::make($request->all(), [ 
             'page'   =>  'required|numeric'
         ]); 
@@ -141,8 +145,8 @@ class AdminController extends ApiBaseController
      */
     public function checkUnique(Request $request)
     {
-        $user = Auth::user();
-        dd($user);
+        $this->checkPermission();
+        
         dd($request->all());
         $validator = Validator::make($request->all(), [
             $request->param  => 'unique:users,'.$request->param,
@@ -161,6 +165,7 @@ class AdminController extends ApiBaseController
      */
     public function updateUser(Request $request)
     {
+        $this->checkPermission();
         $validator = Validator::make($request->all(), [
             'first_name'    => 'required|alpha',
             'last_name'     => 'required|alpha',
