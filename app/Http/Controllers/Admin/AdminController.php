@@ -147,7 +147,6 @@ class AdminController extends ApiBaseController
     {
         $this->checkPermission();
         
-        dd($request->all());
         $validator = Validator::make($request->all(), [
             $request->param  => 'unique:users,'.$request->param,
         ]);
