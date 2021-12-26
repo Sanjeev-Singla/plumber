@@ -75,7 +75,7 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::post('add-safety',[Admin\SafetyController::class,'addSafety']);
     Route::post('update-safety',[Admin\SafetyController::class,'editSafety']);
     Route::post('delete-safety',[Admin\SafetyController::class,'deleteSafety']);	    
-    Route::get('list-safety',[Admin\SafetyController::class,'allSafety']);
+    Route::post('list-safety',[Admin\SafetyController::class,'allSafety']);
     Route::get('single-safety/{id}',[Admin\SafetyController::class,'getSafety']);
 
 

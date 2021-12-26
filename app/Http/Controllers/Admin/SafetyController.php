@@ -85,16 +85,6 @@ class SafetyController extends Controller
                     return $safety ;
             }
             
-            // $validator = Validator::make($request->all(), [
-                            // 'title' => 'required',
-                            // 'description' => 'required',
-                            // 'date' => 'required'
-                            // ]);
-    
-            // if ($validator->fails()) {
-                // return response()->json($validator->errors(), 201);
-            // }
-            
             $id      = $request['id'];
             $safety =  Safety::find($id);
             
@@ -159,10 +149,23 @@ class SafetyController extends Controller
         
     }
     
-    public function allSafety(){
+    public function allSafety(Request $request){
         $admin = Auth::user();
 		if( $admin['role'] == 0 || $admin['role'] == 1){
-            $vehicle = Safety::all();
+
+            $vehicle = Safety::orderBy('id','DESC');
+            if (!blank($request->name) && !blank($request->date_from) &&  !blank($request->date_to)) {
+                $vehicle = $vehicle->where('title',$request->name)
+                            ->whereDate('created_at','>=',$request->date_from)
+                            ->whereDate('created_at','<=',$request->date_to);
+            }elseif(!blank($request->date_from) && !blank($request->date_to)){
+                $vehicle = $vehicle->whereDate('created_at','>=',$request->date_from)
+                            ->whereDate('created_at','<=',$request->date_to);
+            }elseif(!blank($request->name)){
+                $vehicle = $vehicle->where('title',$request->name);
+            }
+            $vehicle = $vehicle->get();
+
             return response()->json($vehicle, 200);
         }else{
             return response()->json(['status' => 'No access!'],  401);
