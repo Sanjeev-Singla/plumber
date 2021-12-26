@@ -74,14 +74,14 @@ class MaterialController extends ApiBaseController
             ->orderBy('id','DESC');
 
             if (!blank($request->employee_id) && !blank($request->date_from) &&  !blank($request->date_to)) {
-                $materials = $materials->where('request_user_id',$request->employee_id);
+                $materials = $materials->where('request_user_id',$request->employee_id)
+                            ->whereDate('created_at','>=',$request->date_from)
+                            ->whereDate('created_at','<=',$request->date_to);
             }elseif(!blank($request->date_from) && !blank($request->date_to)){
                 $materials = $materials->whereDate('created_at','>=',$request->date_from)
                 ->whereDate('created_at','<=',$request->date_to);
             }elseif(!blank($request->employee_id)){
-                $materials = $materials->where('request_user_id',$request->employee_id)
-                            ->whereDate('created_at','>=',$request->date_from)
-                            ->whereDate('created_at','<=',$request->date_to);
+                $materials = $materials->where('request_user_id',$request->employee_id);
             }
             $materials = $materials->get();
             return $this->sendResponse($materials, 'Materials request list.',200,200);
