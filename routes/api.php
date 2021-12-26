@@ -90,7 +90,7 @@ Route::group(['middleware'=>'auth:api'],function(){
     });
 
     Route::prefix('expense')->group(function () {
-        Route::post('create',[Admin\MaterialController::class,'create']);
-        Route::post('get_expense_list',[Admin\MaterialController::class,'index']);
+        Route::post('create',[Admin\ExpenseController::class,'create']);
+        Route::post('get_expense_list',[Admin\ExpenseController::class,'index']);
     });
 });
