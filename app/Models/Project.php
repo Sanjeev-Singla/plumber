@@ -16,7 +16,8 @@ class Project extends Model
         'no_of_rooms',
         'no_of_floors',
         'start_date',
-        'assign_employees'
+        'assign_employees',
+        'work_status'
     ];
     
     public function users()

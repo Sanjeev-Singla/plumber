@@ -16,7 +16,8 @@ class Vehicle extends Model
         'model',
         'type',
         'km',
-        'status'
+        'status',
+        'alloted_user_id'
     ];
 
     /**

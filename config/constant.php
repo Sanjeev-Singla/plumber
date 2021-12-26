@@ -26,5 +26,13 @@ return [
             'disabled'  =>  0,
             'enabled'   =>  1
         ]
+    ],
+    'materials' =>  [
+        'status'    =>  [
+            'pending'   =>  0,
+            'approved'  =>  1,
+            'received'  =>  2,
+            'rejected'  =>  3
+        ]
     ]
 ];

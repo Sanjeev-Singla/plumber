@@ -80,4 +80,12 @@ Route::group(['middleware'=>'auth:api'],function(){
 
 
     Route::post('check-unique',[Admin\AdminController::class,'checkUnique']);
+
+
+    Route::prefix('matetial')->group(function () {
+        Route::post('create',[Admin\MaterialController::class,'create']);
+        Route::post('add_admin_remarks',[Admin\MaterialController::class,'addAdminRemarks']);
+        Route::post('request_list',[Admin\MaterialController::class,'requestList']);
+        Route::post('add_receiver_remarks',[Admin\MaterialController::class,'addReceiverRemarks']);
+    });
 });

@@ -17,13 +17,14 @@ class EmployeeController extends ApiBaseController
      *
      * @return void
      */
-    public function __construct()
+    public function checkPermission()
     {
         $user = Auth::user();
 		if( $user['role'] == 2 ){
             return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
         }
     }
+
     /**
      * register
      *
@@ -33,6 +34,7 @@ class EmployeeController extends ApiBaseController
      
     public function addEmployee(Request $request)
     {
+        $this->checkPermission();
         $validator = Validator::make($request->all(), [
             'first_name' => FIRST_NAME_VALIDATION,
             'last_name' => FIRST_NAME_VALIDATION,
@@ -60,6 +62,7 @@ class EmployeeController extends ApiBaseController
      */
     public function updateEmployee(Request $request)
     {
+        $this->checkPermission();
         $validator = Validator::make($request->all(), [
             'id' => 'required',
             'first_name' => FIRST_NAME_VALIDATION,
@@ -93,6 +96,7 @@ class EmployeeController extends ApiBaseController
      */
     public function deleteEmployee(Request $request)
     {
+        $this->checkPermission();
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|numeric|exists:users,id'
         ]);
@@ -111,6 +115,7 @@ class EmployeeController extends ApiBaseController
      */
     public function allEmployee()
     {
+        $this->checkPermission();
         $users = User::where('status',\Config::get('constant.users.status.enabled'))
                 ->where('role',\Config::get('constant.users.role.employee'))
                 ->orderBy('first_name','ASC')
@@ -126,6 +131,7 @@ class EmployeeController extends ApiBaseController
      */
     public function singleEmployee($id)
     {
+        $this->checkPermission();
         $userDetails = User::where('id',$id)->get();
         return response()->json($userDetails, 200);
     }
