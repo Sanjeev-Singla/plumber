@@ -74,7 +74,7 @@ class MaterialController extends ApiBaseController
             ->orderBy('id','DESC')
             ->get();
 
-            if (!blank($request->employee_id)) {
+            if (!blank($request->employee_id)) {dd();
                 $materials = $materials->where('request_user_id	',$request->employee_id);
             }elseif(!blank($request->date_from) &&  !blank($request->date_to)){
                 $materials = $materials->whereBetwwen('created_at',[$request->date_from,$request->date_to]);
