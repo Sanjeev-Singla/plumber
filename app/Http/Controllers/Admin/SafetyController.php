@@ -165,12 +165,9 @@ class SafetyController extends Controller
                 $vehicle = $vehicle->where('title',$request->name);
             }
             $vehicle = $vehicle->get();
-
-            return response()->json($vehicle, 200);
-        }else{
-            return response()->json(['status' => 'No access!'],  401);
+            return $this->sendResponse($vehicle, 'Safety list.',200,200);
         }
-        
+        return $this->sendSingleFieldError('No access!',401,401);
     }
     
     public function getSafety($id){
