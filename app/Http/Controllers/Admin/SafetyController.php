@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Safety;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Http\Controllers\Admin\ApiBaseController;
 
-
-class SafetyController extends Controller
+class SafetyController extends ApiBaseController
 {
 
     /**
