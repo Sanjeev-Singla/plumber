@@ -29,8 +29,8 @@ class AdminController extends ApiBaseController
      public function addUser(Request $request){
         $this->checkPermission();
         $validator = Validator::make($request->all(), [
-            'first_name'=>  FIRST_NAME_VALIDATION,
-            'last_name' =>  FIRST_NAME_VALIDATION,
+            'first_name'=>  'required|alpha',
+            'last_name' =>  'required|alpha',
             'username'  =>  'required|unique:users,username',
             'email'     =>  'required|unique:users,email',
             'password'  =>  'required',

@@ -36,8 +36,8 @@ class EmployeeController extends ApiBaseController
     {
         $this->checkPermission();
         $validator = Validator::make($request->all(), [
-            'first_name' => FIRST_NAME_VALIDATION,
-            'last_name' => FIRST_NAME_VALIDATION,
+            'first_name' => 'required|alpha',
+            'last_name' => 'required|alpha',
             'address' => 'required',
             'email' => 'required|unique:users,email',
             'password' => 'required',
@@ -65,8 +65,8 @@ class EmployeeController extends ApiBaseController
         $this->checkPermission();
         $validator = Validator::make($request->all(), [
             'id' => 'required',
-            'first_name' => FIRST_NAME_VALIDATION,
-            'last_name' => FIRST_NAME_VALIDATION,
+            'first_name' => 'required|alpha',
+            'last_name' => 'required|alpha',
             'email' => 'required|unique:users,email',
             'password' => 'required',
             'address' => 'required',
