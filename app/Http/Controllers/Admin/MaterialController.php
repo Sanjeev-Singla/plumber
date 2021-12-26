@@ -75,11 +75,11 @@ class MaterialController extends ApiBaseController
             ->get();
 
             if (!blank($request->employee_id)) {
-                $materials = $materials->where($request->employee_id);
+                $materials = $materials->where('request_user_id	',$request->employee_id);
             }elseif(!blank($request->date_from) &&  !blank($request->date_to)){
                 $materials = $materials->whereBetwwen('created_at',[$request->date_from,$request->date_to]);
             }elseif(!blank($request->employee_id) && !blank($request->date_from) &&  !blank($request->date_to)){
-                $materials = $materials->where($request->employee_id)
+                $materials = $materials->where('request_user_id	',$request->employee_id)
                             ->whereBetwwen('created_at',[$request->date_from,$request->date_to]);
             }
 
