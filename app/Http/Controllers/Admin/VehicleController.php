@@ -41,7 +41,7 @@ class VehicleController extends ApiBaseController
             
             return $this->sendResponse((object) [],'Vehicle Added Successfully!',200,200);
         }
-        return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
+        return $this->sendSingleFieldError('No access!',401,401);
     }
         
     /**
@@ -87,7 +87,7 @@ class VehicleController extends ApiBaseController
             Vehicle::destroy($request->id);
             return $this->sendResponse((object) [],'Vehicle Deleted Successfully',200,200);
         }
-        return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
+        return $this->sendSingleFieldError('No access!',401,401);
     }
         
     /**
@@ -124,7 +124,7 @@ class VehicleController extends ApiBaseController
             $vehicle = Vehicle::where('id',$id)->get();
             return $this->sendResponse($vehicle,'Vehicle Details',200,200);
         }
-        return $this->sendSingleFieldError(ACCESS_DENIED,201,201);
+        return $this->sendSingleFieldError('No access!',201,201);
     }
        
     /**
@@ -145,6 +145,6 @@ class VehicleController extends ApiBaseController
 
             return $this->sendResponse($users,'Vehicle Details',200,200);
         }
-        return $this->sendSingleFieldError(ACCESS_DENIED,201,201);
+        return $this->sendSingleFieldError('No access!',201,201);
     }
 }

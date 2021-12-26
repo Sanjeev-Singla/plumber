@@ -57,7 +57,7 @@ class MaterialController extends ApiBaseController
             return $this->sendResponse((object) [], 'Remarks added successfully.',200,200);
         }
 
-        return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
+        return $this->sendSingleFieldError('No access!',401,401);
     }
     
     /**
@@ -74,7 +74,7 @@ class MaterialController extends ApiBaseController
             ->get();
             return $this->sendResponse($materials, 'Materials request list.',200,200);
         }
-        return $this->sendSingleFieldError(ACCESS_DENIED,401,401);
+        return $this->sendSingleFieldError('No access!',401,401);
     }
     
     /**
