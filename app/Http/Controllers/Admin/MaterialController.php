@@ -45,7 +45,7 @@ class MaterialController extends ApiBaseController
                 'project_id'        => 'required|numeric|exists:projects,id',
                 'admin_remarks'     => 'required', 
                 'status'            => 'required|numeric', 
-                'issue_date'        => 'required_if:status:1',
+                'issue_date'        => 'required_if:status,=,1',
             ]);
             if ($validator->fails()) {
                 return $this->sendSingleFieldError($validator->errors()->first(),201,201);
