@@ -72,15 +72,16 @@ class MaterialController extends ApiBaseController
             $materials = \App\Models\Material::with(['user','project'])
             ->where('status',\Config::get('constant.materials.status.pending'))
             ->orderBy('id','DESC');
-            
 
             if (!blank($request->employee_id)) {
                 $materials = $materials->where('request_user_id',$request->employee_id);
             }elseif(!blank($request->date_from) && !blank($request->date_to)){
-                $materials = $materials->whereBetween('created_at',[$request->date_from,$request->date_to]);
+                $materials = $materials->whereDate('created_at','>=',$request->date_from.' 00:00:00')
+                ->whereDate('created_at','<=',$request->date_to.' 00:00:00');
             }elseif(!blank($request->employee_id) && !blank($request->date_from) &&  !blank($request->date_to)){
                 $materials = $materials->where('request_user_id',$request->employee_id)
-                            ->whereBetwwen('created_at',[$request->date_from,$request->date_to]);
+                            ->whereDate('created_at','>=',$request->date_from.' 00:00:00')
+                            ->whereDate('created_at','<=',$request->date_to.' 00:00:00');
             }
             $materials = $materials->get();
             return $this->sendResponse($materials, 'Materials request list.',200,200);
