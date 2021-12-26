@@ -71,7 +71,18 @@ class MaterialController extends ApiBaseController
         if (\Auth::user()->role == 1) {
             $materials = \App\Models\Material::with(['user','project'])
             ->where('status',\Config::get('constant.materials.status.pending'))
+            ->orderBy('id','DESC')
             ->get();
+
+            if (!blank($request->employee_id)) {
+                $materials = $materials->where($request->employee_id);
+            }elseif(!blank($request->date_from) &&  !blank($request->date_to)){
+                $materials = $materials->whereBetwwen('created_at',[$request->date_from,$request->date_to]);
+            }elseif(!blank($request->employee_id) && !blank($request->date_from) &&  !blank($request->date_to)){
+                $materials = $materials->where($request->employee_id)
+                            ->whereBetwwen('created_at',[$request->date_from,$request->date_to]);
+            }
+
             return $this->sendResponse($materials, 'Materials request list.',200,200);
         }
         return $this->sendSingleFieldError('No access!',401,401);
